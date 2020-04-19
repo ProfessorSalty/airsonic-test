@@ -1,0 +1,32 @@
+version: '3.5'
+
+services:
+    openldap:
+        image: osixia/openldap:1.3.0
+        container_name: openldap-test
+        restart: unless-stopped
+        environment:
+            - LDAP_RFC2307BIS_SCHEMA=true
+            - LDAP_ORGANISATION=Airsonic Test
+            - LDAP_DOMAIN=example.com
+            - LDAP_ADMIN_PASSWORD=test
+            - LDAP_CONFIG_PASSWORD=test
+            - LDAP_BASE_DN=ou=people,dc=example,dc=com
+            - LDAP_READONLY_USER=true
+            - LDAP_READONLY_USER_USERNAME=readonly
+            - LDAP_READONLY_USER_PASSWORD=readonly
+            - LDAP_TLS_ENFORCE=false
+        ports:
+            - "389:389"
+            - "636:636"
+        command: --copy-service
+
+    airsonic:
+        image: airsonic/airsonic
+        container_name: airsonic-test
+        environment:
+            - PUID=1000
+            - PGID=1000
+        volumes:
+            - ./airsonic.properties:/airsonic/data/airsonic.properties
+        restart: unless-stopped
